@@ -1,0 +1,57 @@
+version: "3.9"
+
+services:
+  order-service:
+    build: ./order-service
+    ports:
+      - "8000:8000"
+    depends_on:
+      - kafka
+      - order-db
+
+  fraud-payment-service:
+    build: ./fraud-payment-service
+    depends_on:
+      - kafka
+      - payment-db
+
+  inventory-service:
+    build: ./inventory-service
+    depends_on:
+      - kafka
+      - inventory-db
+
+  order-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: orders
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+
+  payment-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: payments
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+
+  inventory-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: inventory
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1

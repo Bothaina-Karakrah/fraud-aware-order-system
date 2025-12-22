@@ -1,0 +1,6 @@
+SQLAlchemy~=2.0.45
+fastapi~=0.126.0
+pydantic~=2.12.5
+aiokafka~=0.12.0
+pytest~=9.0.2
+app~=0.0.1

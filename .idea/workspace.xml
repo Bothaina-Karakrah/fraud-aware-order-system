@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5a73df1c-e790-4898-ae4d-383b56e03310" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/fraud-aware-order-system.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common/db.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common/events.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common/models.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fraud-payment-service/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fraud-payment-service/app/db.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fraud-payment-service/app/fraud.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fraud-payment-service/app/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fraud-payment-service/app/models.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fraud-payment-service/app/payment.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fraud-payment-service/app/state.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fraud-payment-service/requirements.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/infra/kafka/topics.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inventory-service/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inventory-service/app/db.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inventory-service/app/inventory.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inventory-service/app/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inventory-service/app/models.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inventory-service/requirements.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/order-service/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/order-service/app/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/order-service/app/api.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/order-service/app/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/order-service/app/models.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/order-service/app/state.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/order-service/requirements.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 7
+}]]></component>
+  <component name="ProjectId" id="379dBgeqppTFjoe2M0vrPqXtVRg" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/bothainakarakrah/PycharmProjects/fraud-aware-order-system/common"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/common" />
+      <recent name="$PROJECT_DIR$/fraud-payment-service/app" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/fraud-payment-service/app" />
+      <recent name="$PROJECT_DIR$/order-service/app" />
+      <recent name="$PROJECT_DIR$/common" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-9f8e2b94138c-36ea0e71a18c-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.26094.141" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5a73df1c-e790-4898-ae4d-383b56e03310" name="Changes" comment="" />
+      <created>1766319086823</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1766319086823</updated>
+    </task>
+    <servers />
+  </component>
+</project>
