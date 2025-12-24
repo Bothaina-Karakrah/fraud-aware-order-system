@@ -1,9 +1,9 @@
 from pydantic import BaseModel, UUID4, conint
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from db import get_db
-from models import Order, OrderStatus, Product
-from events import publish_event
+from app.db import get_db
+from app.models import Order, OrderStatus, Product
+from app.events import publish_event
 import uuid
 
 router = APIRouter()

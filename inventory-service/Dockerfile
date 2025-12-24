@@ -4,7 +4,7 @@ FROM python:3.12-slim
 # Set working directory in container
 WORKDIR /app
 
-# Set environment variables
+# Set environment variables - prevent Python from writing .pyc files and enable unbuffered logging
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
@@ -22,7 +22,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY app/ ./app/
+COPY . .
 
 # Expose port
 EXPOSE 8000

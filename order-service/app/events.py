@@ -6,8 +6,8 @@ from typing import Optional
 from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 from sqlalchemy.orm import Session
 
-from db import SessionLocal
-from models import Order, OrderStatus, ProcessedEvent
+from app.db import SessionLocal
+from app.models import Order, OrderStatus, ProcessedEvent
 
 
 # ======================

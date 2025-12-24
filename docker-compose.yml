@@ -1,57 +1,115 @@
 version: "3.9"
 
 services:
-  order-service:
-    build: ./order-service
-    ports:
-      - "8000:8000"
-    depends_on:
-      - kafka
-      - order-db
-
-  fraud-payment-service:
-    build: ./fraud-payment-service
-    depends_on:
-      - kafka
-      - payment-db
-
-  inventory-service:
-    build: ./inventory-service
-    depends_on:
-      - kafka
-      - inventory-db
-
+  # -------------------------------
+  # Databases
+  # -------------------------------
   order-db:
     image: postgres:15
+    container_name: order-db
     environment:
       POSTGRES_DB: orders
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d orders"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   payment-db:
     image: postgres:15
+    container_name: payment-db
     environment:
       POSTGRES_DB: payments
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d payments"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   inventory-db:
     image: postgres:15
+    container_name: inventory-db
     environment:
       POSTGRES_DB: inventory
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d inventory"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
+  # -------------------------------
+  # Kafka stack
+  # -------------------------------
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+    ports:
+      - "2181:2181"
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
     depends_on:
       - zookeeper
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    ports:
+      - "9092:9092"
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server kafka:9092 --list"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  # -------------------------------
+  # FastAPI Apps
+  # -------------------------------
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    environment:
+      DATABASE_URL: postgresql://user:pass@order-db:5432/orders
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    ports:
+      - "8000:8000"
+    depends_on:
+      - order-db
+      - kafka
+
+  fraud-payment-service:
+    build: ./fraud-payment-service
+    container_name: fraud-payment-service
+    environment:
+      DATABASE_URL: postgresql://user:pass@payment-db:5432/payments
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      - payment-db
+      - kafka
+
+  inventory-service:
+    build: ./inventory-service
+    container_name: inventory-service
+    environment:
+      DATABASE_URL: postgresql://user:pass@inventory-db:5432/inventory
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      - inventory-db
+      - kafka

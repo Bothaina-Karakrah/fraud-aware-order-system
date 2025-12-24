@@ -1,9 +1,9 @@
 import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from api import router
-from db import init_db, Base, engine
-from events import stop_producer, start_consumer
+from app.api import router
+from app.db import init_db, Base, engine
+from app.events import stop_producer, start_consumer
 
 
 @asynccontextmanager
