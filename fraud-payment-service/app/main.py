@@ -2,45 +2,31 @@ import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
-from api import router
-from models import Payment
-from state import PAYMENT_STATE_MAP, FRAUD_STATE_MAP
-
-from common.db import init_db
-from common.events import start_consumer
+from db import init_db, Base, engine
+from events import start_consumer, stop_producer
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+    # --- Startup ---
+    Base.metadata.create_all(bind=engine)
     init_db()
 
-    fraud_consumer = asyncio.create_task(
-        start_consumer(
-            topic="order-events",
-            group_id="fraud-service-group",
-            model=Payment,
-            state_map=FRAUD_STATE_MAP,
-        )
-    )
-
-    payment_consumer = asyncio.create_task(
-        start_consumer(
-            topic="payment-events",
-            group_id="payment-service-group",
-            model=Payment,
-            state_map=PAYMENT_STATE_MAP,
-        )
-    )
-
+    # Handles Fraud Check, Payment, and Refunds
+    consumer_task = asyncio.create_task(start_consumer())
     yield
+    # --- Shutdown ---
+    consumer_task.cancel()
+    try:
+        await consumer_task
+    except asyncio.CancelledError:
+        pass
 
-    for task in (fraud_consumer, payment_consumer):
-        task.cancel()
-        try:
-            await task
-        except asyncio.CancelledError:
-            pass
+    await stop_producer()
 
 
 app = FastAPI(title="Fraud & Payment Service", lifespan=lifespan)
-app.include_router(router)
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}

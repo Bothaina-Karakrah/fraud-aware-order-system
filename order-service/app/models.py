@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Integer, Numeric, DateTime, Enum
 from sqlalchemy.dialects.postgresql import UUID
-from common.db import Base
+from db import Base
 import uuid
 from datetime import datetime, UTC
 import enum
@@ -12,6 +12,7 @@ class OrderStatus(enum.Enum):
     PAID = "PAID"
     CONFIRMED = "CONFIRMED"
     CANCELED = "CANCELED"
+    REFUNDED = "REFUNDED"
 
 
 class Order(Base):
@@ -24,8 +25,8 @@ class Order(Base):
     payment_method = Column(String, nullable=False)
     amount = Column(Numeric(10, 2), nullable=False)
     status = Column(Enum(OrderStatus), default=OrderStatus.CREATED)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.now(UTC), onupdate=datetime.now(UTC))
+    created_at = Column(DateTime, default=datetime.now(UTC))
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
 
 
 class Product(Base):
@@ -34,3 +35,11 @@ class Product(Base):
     product_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String, nullable=False)
     price = Column(Numeric(10, 2), nullable=False)
+
+
+class ProcessedEvent(Base):
+    __tablename__ = "processed_events"
+
+    event_id = Column(UUID(as_uuid=True), primary_key=True)
+    event_type = Column(String, nullable=False)
+    processed_at = Column(DateTime, default=datetime.now(UTC))
