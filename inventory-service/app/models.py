@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, DateTime, String
 from sqlalchemy.dialects.postgresql import UUID
-from db import Base
+from app.db import Base
 from datetime import datetime, UTC
 
 class Inventory(Base):

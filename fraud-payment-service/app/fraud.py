@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, UTC
 from sqlalchemy.orm import Session
-from .models import Transaction, FraudDecision
+from app.models import Transaction, FraudDecision
 
 def evaluate_fraud(db: Session, order_data: dict) -> dict:
     user_id = order_data.get("user_id")

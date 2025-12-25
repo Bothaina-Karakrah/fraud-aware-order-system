@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from models import Inventory
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, UUID4, conint
-from db import get_db
+from app.db import get_db
 router = APIRouter()
 
 class InventoryResponse(BaseModel):

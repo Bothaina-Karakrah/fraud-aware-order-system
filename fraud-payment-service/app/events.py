@@ -5,16 +5,18 @@ from typing import Optional
 from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 from sqlalchemy.orm import Session
 
-from db import SessionLocal
-from models import Transaction, PaymentStatus, ProcessedEvent
-from fraud import evaluate_fraud # Import your logic
-from payment import process_payment, process_refund
+from app.db import SessionLocal
+from app.models import Transaction, PaymentStatus, ProcessedEvent
+from app.fraud import evaluate_fraud
 
 # ======================
 # Publisher
 # ======================
 
-_KAFKA_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
+_KAFKA_SERVERS = os.getenv(
+    "KAFKA_BOOTSTRAP_SERVERS",
+    "kafka:9092"
+)
 _producer: Optional[AIOKafkaProducer] = None
 
 
@@ -127,6 +129,7 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
 
 # Update consumer to use a unique group_id for this service
 async def start_consumer() -> None:
+    from app.payment import process_payment, process_refund
     consumer = AIOKafkaConsumer(
         "order-events",  # Listen for OrderCreated
         "payment-events",  # Listen for RefundRequested

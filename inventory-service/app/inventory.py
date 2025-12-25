@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models import Inventory
+from app.models import Inventory
 
 
 def reserve_stock(product_id: str, quantity: int, db: Session) -> tuple[bool, str]:

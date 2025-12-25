@@ -1,16 +1,16 @@
 import asyncio
 import random
 import uuid
-from datetime import datetime, UTC
+
 from sqlalchemy.orm import Session
-from models import Transaction, PaymentStatus
-from events import publish_event
+from app.models import Transaction, PaymentStatus
 
 
 async def process_payment(db: Session, order_data: dict) -> bool:
     """
     Simulates a payment gateway charge and records it in the DB.
     """
+    from app.events import publish_event
     order_id = order_data.get("order_id")
     amount = order_data.get("amount")
 

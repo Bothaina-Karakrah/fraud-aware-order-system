@@ -4,13 +4,15 @@ import uuid
 from typing import Optional
 
 from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
-from sqlalchemy.orm import Session
 
-from db import SessionLocal
-from models import Inventory, ProcessedEvent
-from inventory import reserve_stock # Import your logic
+from app.db import SessionLocal
+from app.models import Inventory, ProcessedEvent
+from app.inventory import reserve_stock # Import your logic
 
-_KAFKA_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
+_KAFKA_SERVERS = os.getenv(
+    "KAFKA_BOOTSTRAP_SERVERS",
+    "kafka:9092"
+)
 _producer: Optional[AIOKafkaProducer] = None
 
 async def get_producer() -> AIOKafkaProducer:

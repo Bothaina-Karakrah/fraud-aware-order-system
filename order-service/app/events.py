@@ -14,7 +14,10 @@ from app.models import Order, OrderStatus, ProcessedEvent
 # Kafka Config
 # ======================
 
-_KAFKA_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
+_KAFKA_SERVERS = os.getenv(
+    "KAFKA_BOOTSTRAP_SERVERS",
+    "kafka:9092"
+)
 _producer: Optional[AIOKafkaProducer] = None
 
 

@@ -5,23 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5a73df1c-e790-4898-ae4d-383b56e03310" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/fraud-aware-order-system.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/fraud-aware-order-system.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fraud-payment-service/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fraud-payment-service/app/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/app/db.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fraud-payment-service/app/events.py" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/app/events.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fraud-payment-service/app/fraud.py" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/app/fraud.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fraud-payment-service/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fraud-payment-service/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/app/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fraud-payment-service/app/payment.py" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/app/payment.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fraud-payment-service/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inventory-service/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory-service/app/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/app/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory-service/app/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/app/db.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inventory-service/app/events.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/app/events.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory-service/app/inventory.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/app/inventory.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inventory-service/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory-service/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/app/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inventory-service/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/app/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/app/api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/order-service/app/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/app/db.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/order-service/app/events.py" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/app/events.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/app/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
