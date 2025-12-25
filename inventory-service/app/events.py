@@ -7,7 +7,7 @@ from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 
 from app.db import SessionLocal
 from app.models import Inventory, ProcessedEvent
-from app.inventory import reserve_stock # Import your logic
+from app.inventory import reserve_stock
 
 _KAFKA_SERVERS = os.getenv(
     "KAFKA_BOOTSTRAP_SERVERS",
@@ -34,6 +34,8 @@ async def publish_event(*, topic: str, event_type: str, payload: dict) -> None:
     producer = await get_producer()
     await producer.send(topic, value=event)
 
+from uuid import UUID
+
 async def handle_event(event: dict) -> None:
     event_id = event.get("event_id")
     event_type = event.get("event_type")
@@ -45,8 +47,15 @@ async def handle_event(event: dict) -> None:
 
     db = SessionLocal()
     try:
+        # Convert event_id string to UUID
+        try:
+            event_uuid = UUID(event_id)
+        except (ValueError, AttributeError, TypeError):
+            print(f"Invalid event_id format: {event_id}")
+            return
+
         # 1. Idempotency Check
-        if db.query(ProcessedEvent).filter_by(event_id=event_id).first():
+        if db.query(ProcessedEvent).filter_by(event_id=event_uuid).first():
             return
 
         # 2. React to Successful Payment
@@ -73,7 +82,8 @@ async def handle_event(event: dict) -> None:
                     payload={"order_id": order_id, "reason": message}
                 )
 
-        db.add(ProcessedEvent(event_id=event_id, event_type=event_type))
+        # Use UUID object here
+        db.add(ProcessedEvent(event_id=event_uuid, event_type=event_type))
         db.commit()
     except Exception as e:
         db.rollback()

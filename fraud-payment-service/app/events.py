@@ -57,14 +57,17 @@ EVENT_STATE_MAP = {
     "RefundRequested": PaymentStatus.REFUNDED,
 }
 
-
 async def handle_event(event: dict, db: Optional[Session] = None) -> None:
+    import traceback
+    from app.payment import process_payment, process_refund
+
     event_id = event.get("event_id")
     event_type = event.get("event_type")
     payload = event.get("payload", {})
     order_id = payload.get("order_id")
 
     if not event_id or not order_id:
+        print("Skipping event: missing event_id or order_id")
         return
 
     close_db = False
@@ -73,16 +76,17 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
         close_db = True
 
     try:
-        # 1. Idempotency Check
+        # Idempotency check
         if db.query(ProcessedEvent).filter_by(event_id=event_id).first():
+            print(f"Skipping already processed event: {event_id}")
             return
 
-        # 2. Handle OrderCreated (The Start of this service's job)
         if event_type == "OrderCreated":
-            # Run Fraud Logic
+            print(f"Processing OrderCreated: {order_id}")
+            # Fraud check
             fraud_result = evaluate_fraud(db, payload)
 
-            # Create the transaction record
+            # Create transaction
             transaction = Transaction(
                 order_id=uuid.UUID(order_id),
                 user_id=uuid.UUID(payload.get("user_id")),
@@ -91,11 +95,12 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
                 fraud_decision=fraud_result["decision"],
                 fraud_score=fraud_result["score"],
                 status=PaymentStatus.PENDING,
-                idempotency_key=event_id  # Use event_id as idempotency key
+                idempotency_key=event_id
             )
             db.add(transaction)
+            db.commit()  # Commit immediately so transaction exists before payment
 
-            # 3. Emit Result to Order Service
+            # Publish result
             if fraud_result["decision"].value == "BLOCK":
                 await publish_event(
                     topic="order-events",
@@ -103,44 +108,57 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
                     payload={"order_id": order_id, "reason": fraud_result["reason"]}
                 )
             else:
-                # Approved!
                 await publish_event(
                     topic="order-events",
                     event_type="OrderApproved",
                     payload={"order_id": order_id}
                 )
-                # Execute Payment
-                success = await process_payment(db, payload)
+                # Process payment
+                try:
+                    await process_payment(db, payload)
+                    db.commit()  # Commit payment changes
+                except Exception:
+                    db.rollback()
+                    print(f"Payment processing failed for order {order_id}:\n{traceback.format_exc()}")
+                    # Optionally, publish a failed payment event here
 
-        # 5. Handle Compensation (RefundRequested)
         elif event_type == "RefundRequested":
-            await process_refund(db, order_id)
+            print(f"Processing RefundRequested: {order_id}")
+            try:
+                await process_refund(db, order_id)
+                db.commit()
+            except Exception:
+                db.rollback()
+                print(f"Refund failed for order {order_id}:\n{traceback.format_exc()}")
 
+        # Mark event processed
         db.add(ProcessedEvent(event_id=event_id, event_type=event_type))
         db.commit()
 
-    except Exception as e:
+    except Exception:
         db.rollback()
-        print(f"Error: {e}")
+        print(f"Error handling event {event_id}:\n{traceback.format_exc()}")
     finally:
         if close_db:
             db.close()
 
-
 # Update consumer to use a unique group_id for this service
 async def start_consumer() -> None:
     from app.payment import process_payment, process_refund
+    print("Starting Kafka consumer...")
     consumer = AIOKafkaConsumer(
-        "order-events",  # Listen for OrderCreated
-        "payment-events",  # Listen for RefundRequested
+        "order-events",
+        "payment-events",
         bootstrap_servers=_KAFKA_SERVERS,
         value_deserializer=lambda m: json.loads(m.decode()),
         group_id="payment-service-group",
+        auto_offset_reset="earliest",
     )
-
     await consumer.start()
+    print("Kafka consumer started!")
     try:
         async for msg in consumer:
+            print("Received message:", msg.value)  # <-- log every event
             await handle_event(msg.value)
     finally:
         await consumer.stop()
