@@ -47,7 +47,7 @@ async def process_payment(db: Session, order_data: dict) -> bool:
         await publish_event(
             topic="order-events",
             event_type="PaymentSucceeded",
-            payload=order_data,
+            payload={"order_id": order_id, "product_id": order_data.get("product_id"), "quantity": order_data.get("quantity")},
         )
     else:
         await publish_event(
