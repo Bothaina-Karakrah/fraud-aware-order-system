@@ -98,7 +98,7 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
             await publish_event(
                 topic="payment-events",
                 event_type="RefundRequested",
-                payload={"order_id": str(order.order_id), "amount": float(order.amount)}
+                payload={"order_id": str(order.order_id), "amount": float(order.amount), "reason": order.reason},
             )
 
         db.add(ProcessedEvent(event_id=event_id, event_type=event_type))
