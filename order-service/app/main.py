@@ -4,7 +4,9 @@ from fastapi import FastAPI
 from app.api import router
 from app.db import init_db, Base, engine
 from app.events import stop_producer, start_consumer
+from app.logging import get_logger
 
+logger = get_logger()
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):

@@ -8,7 +8,9 @@ from sqlalchemy.orm import Session
 
 from app.db import SessionLocal
 from app.models import Order, OrderStatus, ProcessedEvent
+from app.logging import get_logger
 
+logger = get_logger()
 
 # ======================
 # Kafka Config
@@ -32,14 +34,26 @@ async def get_producer() -> AIOKafkaProducer:
     return _producer
 
 
-async def publish_event(*, topic: str, event_type: str, payload: dict) -> None:
+async def publish_event(*, topic: str, event_type: str, payload: dict, trace_id: str) -> None:
     event = {
         "event_id": str(uuid.uuid4()),
+        "trace_id": trace_id,
         "event_type": event_type,
         "payload": payload,
     }
+
     producer = await get_producer()
     await producer.send(topic, value=event)
+
+    logger.info(
+        "Event published",
+        extra={
+            "service": "order-service",
+            "trace_id": trace_id,
+            "order_id": payload.get("order_id"),
+            "event_type": event_type,
+        },
+    )
 
 
 async def stop_producer() -> None:
@@ -68,9 +82,23 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
     event_id = event.get("event_id")
     event_type = event.get("event_type")
     payload = event.get("payload", {})
-
     order_id = payload.get("order_id")
+    trace_id = event.get("trace_id", str(uuid.uuid4()))
+
+    logger.info(
+        f"Started consuming an order - {order_id}",
+        extra={
+            "service": "order-service",
+            "trace_id": trace_id,
+            "order_id": order_id,
+            "event_type": event_type,
+        },
+    )
     if not event_id or not order_id:
+        logger.warning(
+            f"Invalid Inputs",
+            extra={"service": "order-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
+        )
         return
 
     close_db = False
@@ -81,24 +109,52 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
     try:
         # 1. Idempotency Check
         if db.query(ProcessedEvent).filter_by(event_id=event_id).first():
+            logger.info(
+                "Event already processed",
+                extra={"service": "order-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
+            )
             return
 
         # 2. Find Order
         order = db.query(Order).filter_by(order_id=order_id).first()
         if not order:
+            logger.warning(
+                f"Order not found",
+                extra={"service": "order-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
+            )
             return
 
         # 3. Update Status
+        prev_status = order.status
         new_status = EVENT_STATE_MAP.get(event_type)
         if new_status:
             order.status = new_status
+            logger.info(
+                f"Order - {order_id} status changed from {prev_status} to {new_status}",
+                extra={
+                    "service": "order-service",
+                    "trace_id": trace_id,
+                    "order_id": order_id,
+                    "event_type": event_type,
+                },
+            )
 
         # 4. COMPENSATION LOGIC: If stock fails but we were already PAID, request refund
-        if event_type == "StockReservationFailed" and order.status == OrderStatus.PAID:
+        if event_type == "StockReservationFailed" and prev_status == OrderStatus.PAID:
+            logger.info(
+                f"Order - {order_id} - RefundRequested requested",
+                extra={
+                    "service": "order-service",
+                    "trace_id": trace_id,
+                    "order_id": order_id,
+                    "event_type": event_type,
+                },
+            )
             await publish_event(
                 topic="payment-events",
                 event_type="RefundRequested",
                 payload={"order_id": str(order.order_id), "amount": float(order.amount), "reason": order.reason},
+                trace_id= trace_id
             )
 
         db.add(ProcessedEvent(event_id=event_id, event_type=event_type))
@@ -106,7 +162,10 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
 
     except Exception as e:
         db.rollback()
-        print(f"Error handling event: {e}")
+        logger.error(
+            f"Error handling event: {e}",
+            extra={"service": "order-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
+        )
     finally:
         if close_db:
             db.close()

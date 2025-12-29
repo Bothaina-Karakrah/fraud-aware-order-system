@@ -5,7 +5,9 @@ from app.db import get_db
 from app.models import Order, OrderStatus, Product
 from app.events import publish_event
 import uuid
+from app.logging import get_logger
 
+logger = get_logger()
 router = APIRouter()
 
 class CreateOrderRequest(BaseModel):
@@ -39,8 +41,13 @@ async def create_order(req: CreateOrderRequest, db: Session = Depends(get_db)):
 
     # Calculate total amount
     amount = product.price * req.quantity
+    trace_id = str(uuid.uuid4())
 
     try:
+        logger.info(
+            "Start create_order request",
+            extra={"service": "order-service", "trace_id": trace_id, "order_id": None, "event_type": "OrderCreated"}
+        )
         # Create order
         order = Order(
             order_id=uuid.uuid4(),
@@ -68,11 +75,18 @@ async def create_order(req: CreateOrderRequest, db: Session = Depends(get_db)):
                     "payment_method": str(req.payment_method),
                     "amount": float(amount),
                 },
+                trace_id= trace_id
             )
         except Exception as e:
-            print(f"Failed to publish event: {e}")
-            # Order is saved but event not published
-            # Could implement retry logic or dead letter queue here
+            logger.error(
+                f"Failed to publish event: {e}",
+                extra={
+                    "service": "order-service",
+                    "trace_id": trace_id,
+                    "order_id": str(order.order_id),
+                    "event_type": "OrderCreated"
+                }
+            )
 
         return {
             "order_id": order.order_id,
@@ -82,7 +96,10 @@ async def create_order(req: CreateOrderRequest, db: Session = Depends(get_db)):
 
     except Exception as e:
         db.rollback()
-        print(f"Error creating order: {e}")
+        logger.error(
+            f"Error creating order: {e}",
+            extra={"service": "order-service", "trace_id": trace_id, "order_id": None, "event_type": "OrderCreated"}
+        )
         raise HTTPException(status_code=500, detail="Service failure")
 
 
