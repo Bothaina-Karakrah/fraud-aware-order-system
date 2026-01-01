@@ -48,7 +48,7 @@ async def publish_event(*, topic: str, event_type: str, payload: dict, trace_id:
     logger.info(
         "Event published",
         extra={
-            "service": "order-service",
+            "service": "payment-service",
             "trace_id": trace_id,
             "order_id": payload.get("order_id"),
             "event_type": event_type,

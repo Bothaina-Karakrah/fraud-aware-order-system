@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.models import Transaction, PaymentStatus
 
 
-async def process_payment(db: Session, order_data: dict) -> bool:
+async def process_payment(db: Session, order_data: dict, trace_id:str) -> bool:
     """
     Simulates a payment gateway charge and records it in the DB.
     """
@@ -48,18 +48,20 @@ async def process_payment(db: Session, order_data: dict) -> bool:
             topic="order-events",
             event_type="PaymentSucceeded",
             payload={"order_id": order_id, "product_id": order_data.get("product_id"), "quantity": order_data.get("quantity")},
+            trace_id=trace_id
         )
     else:
         await publish_event(
             topic="order-events",
             event_type="PaymentFailed",
-            payload={"order_id": order_id, "reason": "insufficient_funds"}
+            payload={"order_id": order_id, "reason": "insufficient_funds"},
+            trace_id=trace_id
         )
 
     return payment_successful
 
 
-async def process_refund(db: Session, order_id: str):
+async def process_refund(db: Session, order_id: str, trace_id: str):
     """
     Handles the compensating transaction if inventory fails later.
     """
@@ -73,5 +75,6 @@ async def process_refund(db: Session, order_id: str):
         await publish_event(
             topic="order-events",
             event_type="RefundSucceeded",
-            payload={"order_id": order_id}
+            payload={"order_id": order_id},
+            trace_id=trace_id
         )
