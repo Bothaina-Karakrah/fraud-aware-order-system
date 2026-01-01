@@ -70,7 +70,7 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
     event_type = event.get("event_type")
     payload = event.get("payload", {})
     order_id = payload.get("order_id")
-    trace_id = event.get("trace_id", str(uuid.uuid4()))
+    trace_id = event.get("trace_id")
 
     if not event_id or not order_id:
         logger.warning(

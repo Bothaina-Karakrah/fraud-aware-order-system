@@ -8,6 +8,9 @@ from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 from app.db import SessionLocal
 from app.models import Inventory, ProcessedEvent
 from app.inventory import reserve_stock
+from app.logging import get_logger
+
+logger = get_logger()
 
 _KAFKA_SERVERS = os.getenv(
     "KAFKA_BOOTSTRAP_SERVERS",
@@ -25,11 +28,12 @@ async def get_producer() -> AIOKafkaProducer:
         await _producer.start()
     return _producer
 
-async def publish_event(*, topic: str, event_type: str, payload: dict) -> None:
+async def publish_event(*, topic: str, event_type: str, payload: dict, trace_id: str) -> None:
     event = {
         "event_id": str(uuid.uuid4()),
         "event_type": event_type,
         "payload": payload,
+        "trace_id": trace_id
     }
     producer = await get_producer()
     await producer.send(topic, value=event)
@@ -41,8 +45,13 @@ async def handle_event(event: dict) -> None:
     event_type = event.get("event_type")
     payload = event.get("payload", {})
     order_id = payload.get("order_id")
+    trace_id = payload.get("trace_id")
 
     if not event_id or not order_id:
+        logger.warning(
+            "Invalid Inputs",
+            extra={"service": "inventory-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
+        )
         return
 
     db = SessionLocal()
@@ -51,11 +60,19 @@ async def handle_event(event: dict) -> None:
         try:
             event_uuid = UUID(event_id)
         except (ValueError, AttributeError, TypeError):
-            print(f"Invalid event_id format: {event_id}")
+            logger.warning(
+                f"Invalid event_id format: {event_id}",
+                extra={"service": "inventory-service", "trace_id": trace_id, "order_id": order_id,
+                       "event_type": event_type}
+            )
             return
 
         # 1. Idempotency Check
         if db.query(ProcessedEvent).filter_by(event_id=event_uuid).first():
+            logger.info(
+                "Event already processed",
+                extra={"service": "inventory-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
+            )
             return
 
         # 2. React to Successful Payment
@@ -72,14 +89,26 @@ async def handle_event(event: dict) -> None:
                 await publish_event(
                     topic="order-events",
                     event_type="StockReserved",
-                    payload={"order_id": order_id}
+                    payload={"order_id": order_id},
+                    trace_id=trace_id
+                )
+                logger.info(
+                    f"Stock reserved - order {order_id}",
+                    extra={"service": "inventory-service", "trace_id": trace_id, "order_id": order_id,
+                           "event_type": event_type}
                 )
             else:
                 # Saga Failure Path -> Trigger Refund in Payment Service
                 await publish_event(
                     topic="order-events",
                     event_type="StockReservationFailed",
-                    payload={"order_id": order_id, "reason": message}
+                    payload={"order_id": order_id, "reason": message},
+                    trace_id=trace_id
+                )
+                logger.info(
+                    f"Stock reservation failed - order {order_id}",
+                    extra={"service": "inventory-service", "trace_id": trace_id, "order_id": order_id,
+                           "event_type": event_type}
                 )
 
         # Use UUID object here
@@ -87,7 +116,10 @@ async def handle_event(event: dict) -> None:
         db.commit()
     except Exception as e:
         db.rollback()
-        print(f"Inventory Error: {e}")
+        logger.error(
+            f"Error handling event: {e}",
+            extra={"service": "inventory-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
+        )
     finally:
         db.close()
 
