@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, DateTime, String
 from sqlalchemy.dialects.postgresql import UUID
 from app.db import Base
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 
 class Inventory(Base):
     __tablename__ = "inventory"
@@ -9,7 +9,7 @@ class Inventory(Base):
     product_id = Column(UUID(as_uuid=True), primary_key=True)
     available_quantity = Column(Integer, default=0)
     reserved_quantity = Column(Integer, default=0)
-    updated_at = Column(DateTime, default=datetime.now(UTC), onupdate=datetime.now(UTC))
+    updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
 
 class ProcessedEvent(Base):
@@ -17,4 +17,4 @@ class ProcessedEvent(Base):
 
     event_id = Column(UUID(as_uuid=True), primary_key=True)
     event_type = Column(String, nullable=False)
-    processed_at = Column(DateTime, default=datetime.now(UTC))
+    processed_at = Column(DateTime, default=datetime.now(timezone.utc))

@@ -5,23 +5,26 @@ from app.api import router
 from app.db import init_db, Base, engine
 from app.events import stop_producer, start_consumer
 from app.logging import get_logger
+from prometheus_client import make_asgi_app
 
 logger = get_logger()
 
+# --- Lifespan context to handle startup and shutdown ---
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     # --- Startup ---
+    logger.info("Starting Order Service...")
     Base.metadata.create_all(bind=engine)
     init_db()
 
-    # Start the Kafka consumer as a background task
-    # This allows the Order Service to react to events from other services
+    # Start Kafka consumer in background
     consumer_task = asyncio.create_task(start_consumer())
+    logger.info("Kafka consumer started")
 
     yield
 
     # --- Shutdown ---
-    # Cancel the consumer task
+    logger.info("Shutting down Order Service...")
     consumer_task.cancel()
     try:
         await consumer_task
@@ -29,7 +32,15 @@ async def lifespan(_app: FastAPI):
         pass
 
     await stop_producer()
+    logger.info("Kafka producer stopped")
 
 
+# --- Create FastAPI app ---
 app = FastAPI(title="Order Service", lifespan=lifespan)
+
+# Mount Prometheus metrics endpoint at /metrics
+metrics_app = make_asgi_app()
+app.mount("/metrics", metrics_app)
+
+# Include your API router
 app.include_router(router)

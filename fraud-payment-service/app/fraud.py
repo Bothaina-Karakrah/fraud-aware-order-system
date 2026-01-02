@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, UTC
+from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
 from app.models import Transaction, FraudDecision
 
@@ -12,7 +12,7 @@ def evaluate_fraud(db: Session, order_data: dict) -> dict:
 
     # --- Rule 2: Velocity Check (Design Requirement) ---
     # Check how many successful/pending transactions this user has in the last hour
-    one_hour_ago = datetime.now(UTC) - timedelta(hours=1)
+    one_hour_ago = datetime.now(timezone.utc) - timedelta(hours=1)
     recent_order_count = db.query(Transaction).filter(
         Transaction.user_id == user_id,
         Transaction.created_at >= one_hour_ago

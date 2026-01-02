@@ -1,6 +1,7 @@
 import os
 import json
 import uuid
+from datetime import datetime, timezone
 from typing import Optional
 
 from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
@@ -9,6 +10,12 @@ from sqlalchemy.orm import Session
 from app.db import SessionLocal
 from app.models import Order, OrderStatus, ProcessedEvent
 from app.logging import get_logger
+from app.metrics import (
+    order_processing_duration_seconds,
+    order_status_transitions_total,
+    orders_confirmed_total,
+    orders_canceled_total
+)
 
 logger = get_logger()
 
@@ -73,10 +80,11 @@ EVENT_STATE_MAP = {
     "PaymentSucceeded": OrderStatus.PAID,
     "PaymentFailed": OrderStatus.CANCELED,
     "StockReserved": OrderStatus.CONFIRMED,
-    "StockReservationFailed": OrderStatus.CANCELED, # Trigger compensation
+    "StockReservationFailed": OrderStatus.CANCELED,
     "RefundSucceeded": OrderStatus.REFUNDED,
 }
 
+FINAL_STATUSES = [OrderStatus.CONFIRMED, OrderStatus.CANCELED, OrderStatus.REFUNDED]
 
 async def handle_event(event: dict, db: Optional[Session] = None) -> None:
     event_id = event.get("event_id")
@@ -107,7 +115,7 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
         close_db = True
 
     try:
-        # 1. Idempotency Check
+        # Idempotency Check
         if db.query(ProcessedEvent).filter_by(event_id=event_id).first():
             logger.info(
                 "Event already processed",
@@ -115,7 +123,7 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
             )
             return
 
-        # 2. Find Order
+        # check if the order exists
         order = db.query(Order).filter_by(order_id=order_id).first()
         if not order:
             logger.warning(
@@ -124,7 +132,7 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
             )
             return
 
-        # 3. Update Status
+        # Update Status
         prev_status = order.status
         new_status = EVENT_STATE_MAP.get(event_type)
         if new_status:
@@ -138,8 +146,19 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
                     "event_type": event_type,
                 },
             )
+            # Metrics
+            order_status_transitions_total.labels(status=str(new_status.value)).inc()
+            if new_status == OrderStatus.APPROVED:
+                orders_confirmed_total.inc()
+            if new_status == OrderStatus.CANCELED:
+                orders_canceled_total.labels(reason=event_type).inc()
 
-        # 4. COMPENSATION LOGIC: If stock fails but we were already PAID, request refund
+            if order.status in FINAL_STATUSES:
+                duration_seconds = (datetime.now(timezone.utc) - order.created_at).total_seconds()
+                logger.info(f"Order processing duration: {duration_seconds} seconds")
+                order_processing_duration_seconds.observe(duration_seconds)
+
+        # If stock fails, but we were already PAID, request refund
         if event_type == "StockReservationFailed" and prev_status == OrderStatus.PAID:
             logger.info(
                 f"Order - {order_id} - RefundRequested requested",

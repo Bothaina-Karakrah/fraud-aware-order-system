@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Integer, Numeric, DateTime, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from app.db import Base
 import uuid
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 import enum
 
 
@@ -25,8 +25,12 @@ class Order(Base):
     payment_method = Column(String, nullable=False)
     amount = Column(Numeric(10, 2), nullable=False)
     status = Column(Enum(OrderStatus), default=OrderStatus.CREATED)
-    created_at = Column(DateTime, default=datetime.now(UTC))
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
 
 
 class Product(Base):
@@ -42,4 +46,4 @@ class ProcessedEvent(Base):
 
     event_id = Column(UUID(as_uuid=True), primary_key=True)
     event_type = Column(String, nullable=False)
-    processed_at = Column(DateTime, default=datetime.now(UTC))
+    processed_at = Column(DateTime, default=datetime.now(timezone.utc))

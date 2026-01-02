@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Numeric, DateTime, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from app.db import Base
 import uuid
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 import enum
 
 
@@ -31,8 +31,8 @@ class Transaction(Base):
     fraud_decision = Column(Enum(FraudDecision))
     fraud_score = Column(Numeric(3, 2))
     idempotency_key = Column(String, nullable=False)
-    created_at = Column(DateTime, default=datetime.now(UTC))
-    updated_at = Column(DateTime, default=datetime.now(UTC), onupdate=datetime.now(UTC))
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
 
 class ProcessedEvent(Base):
@@ -40,4 +40,4 @@ class ProcessedEvent(Base):
 
     event_id = Column(UUID(as_uuid=True), primary_key=True)
     event_type = Column(String, nullable=False)
-    processed_at = Column(DateTime, default=datetime.now(UTC))
+    processed_at = Column(DateTime, default=datetime.now(timezone.utc))
