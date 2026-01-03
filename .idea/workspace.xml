@@ -5,17 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5a73df1c-e790-4898-ae4d-383b56e03310" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/order-service/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/order-service/app/metrics.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fraud-payment-service/app/metrics.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inventory-service/app/metrics.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fraud-payment-service/app/fraud.py" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/app/fraud.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fraud-payment-service/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/app/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory-service/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/app/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/app/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/app/api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/app/events.py" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/app/events.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fraud-payment-service/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fraud-payment-service/app/events.py" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/app/events.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fraud-payment-service/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fraud-payment-service/app/payment.py" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/app/payment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fraud-payment-service/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory-service/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory-service/app/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/app/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory-service/app/events.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/app/events.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory-service/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory-service/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/order-service/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/app/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,9 +59,9 @@
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/inventory-service/app" />
+      <recent name="$PROJECT_DIR$/fraud-payment-service/app" />
       <recent name="$PROJECT_DIR$/fraud-payment-service" />
       <recent name="$PROJECT_DIR$/common" />
-      <recent name="$PROJECT_DIR$/fraud-payment-service/app" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/order-service/app" />

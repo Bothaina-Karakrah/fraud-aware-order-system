@@ -4,7 +4,7 @@ import uuid
 
 from sqlalchemy.orm import Session
 from app.models import Transaction, PaymentStatus
-
+from app.metrics import (payment_failures, payment_attempts_total)
 
 async def process_payment(db: Session, order_data: dict, trace_id:str) -> bool:
     """
@@ -14,16 +14,15 @@ async def process_payment(db: Session, order_data: dict, trace_id:str) -> bool:
     order_id = order_data.get("order_id")
     amount = order_data.get("amount")
 
-    # 1. Simulate External Gateway Latency (Requirement: < 2s)
+    # Simulate External Gateway Latency (Requirement: < 2s)
     await asyncio.sleep(random.uniform(0.5, 1.5))
 
-    # 2. Simulate Success/Failure (e.g., 90% success)
+    # Simulate Success/Failure (e.g., 90% success)
     payment_successful = random.random() < 0.90
 
     status = PaymentStatus.SUCCESS if payment_successful else PaymentStatus.FAILED
 
-    # 3. Update/Create Transaction Record
-    # Note: The transaction might already exist from the fraud step
+    # Update/Create Transaction Record
     transaction = db.query(Transaction).filter_by(order_id=uuid.UUID(order_id)).first()
 
     if transaction:
@@ -42,7 +41,8 @@ async def process_payment(db: Session, order_data: dict, trace_id:str) -> bool:
 
     db.commit()
 
-    # 4. Emit the Result
+    payment_attempts_total.inc()
+    # Emit the Result
     if payment_successful:
         await publish_event(
             topic="order-events",
@@ -51,6 +51,7 @@ async def process_payment(db: Session, order_data: dict, trace_id:str) -> bool:
             trace_id=trace_id
         )
     else:
+        payment_failures.labels(reason="insufficient_funds").inc()
         await publish_event(
             topic="order-events",
             event_type="PaymentFailed",

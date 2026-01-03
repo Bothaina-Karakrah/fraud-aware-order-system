@@ -1,6 +1,7 @@
 import os
 import json
 import uuid
+import time
 from typing import Optional
 from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 from sqlalchemy.orm import Session
@@ -9,6 +10,11 @@ from app.db import SessionLocal
 from app.models import Transaction, PaymentStatus, ProcessedEvent
 from app.fraud import evaluate_fraud
 from app.logging import get_logger
+from app.metrics import (
+    fraud_check_duration_seconds,
+    fraud_decisions,
+    payment_failures,
+)
 
 logger = get_logger()
 
@@ -98,8 +104,16 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
                 f"Processing OrderCreated: {order_id}",
                 extra={"service": "fraud-payment-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
             )
+
             # Fraud check
+            start = time.perf_counter()
             fraud_result = evaluate_fraud(db, payload)
+            duration_seconds = time.perf_counter() - start
+            # Histogram
+            logger.info(f"Order processing duration: {duration_seconds} seconds")
+            fraud_check_duration_seconds.observe(duration_seconds)
+            # Counter
+            fraud_decisions.labels(decision=fraud_result["decision"]).inc()
 
             # Create transaction
             transaction = Transaction(
@@ -139,12 +153,13 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
                     payload={"order_id": order_id},
                     trace_id=trace_id,
                 )
-                # Process payment
+                # order approved then process the payment
                 try:
                     await process_payment(db, payload, trace_id)
                     db.commit()  # Commit payment changes
-                except Exception:
+                except Exception as e:
                     db.rollback()
+                    payment_failures.labels(reason="PROCESSING_ERROR").inc()
                     logger.info(
                         f"Payment processing failed for order {order_id}",
                         extra={

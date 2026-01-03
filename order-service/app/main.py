@@ -9,7 +9,6 @@ from prometheus_client import make_asgi_app
 
 logger = get_logger()
 
-# --- Lifespan context to handle startup and shutdown ---
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     # --- Startup ---
@@ -42,5 +41,4 @@ app = FastAPI(title="Order Service", lifespan=lifespan)
 metrics_app = make_asgi_app()
 app.mount("/metrics", metrics_app)
 
-# Include your API router
 app.include_router(router)

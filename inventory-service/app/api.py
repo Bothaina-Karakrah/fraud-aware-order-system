@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
-from models import Inventory
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, UUID4, conint
+from pydantic import BaseModel, UUID4
 from app.db import get_db
+from app.models import Inventory
 router = APIRouter()
 
 class InventoryResponse(BaseModel):
@@ -22,3 +22,7 @@ async def get_inventory(product_id: UUID4, db: Session = Depends(get_db)):
         "reserved_quantity": inv.reserved_quantity,
         "updated_at": inv.updated_at,
     }
+
+@router.get("/health")
+async def health():
+    return {"status": "ok"}
