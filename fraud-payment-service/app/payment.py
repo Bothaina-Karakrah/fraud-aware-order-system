@@ -66,6 +66,7 @@ async def process_refund(db: Session, order_id: str, trace_id: str):
     """
     Handles the compensating transaction if inventory fails later.
     """
+    from app.events import publish_event
     transaction = db.query(Transaction).filter_by(order_id=uuid.UUID(order_id)).first()
     if transaction and transaction.status == PaymentStatus.SUCCESS:
         # Simulate refund delay

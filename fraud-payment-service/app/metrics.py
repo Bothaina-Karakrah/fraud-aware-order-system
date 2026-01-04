@@ -19,7 +19,6 @@ fraud_decisions = Counter(
 # -----------------------
 # Payment metrics
 # -----------------------
-# for implementing payment_success_rate metric
 payment_attempts_total = Counter(
     "payment_attempts_total",
     "Total number of payment attempts",
@@ -28,5 +27,10 @@ payment_attempts_total = Counter(
 payment_failures = Counter(
     "payment_failures_total",
     "Total number of payment failures",
-    ["reason"],  # e.g. insufficient_funds, fraud_blocked, timeout
+    ["reason"],
+)
+
+payment_refunds_total = Counter(
+    "payment_refunds_total",
+    "Total number of refunded payments",
 )

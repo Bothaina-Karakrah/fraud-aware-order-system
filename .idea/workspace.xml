@@ -5,21 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5a73df1c-e790-4898-ae4d-383b56e03310" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/fraud-payment-service/app/metrics.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/inventory-service/app/metrics.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/prometheus/alerts/fraud-payment-alerts.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/prometheus/alerts/order-alerts.yml.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/prometheus/alerts/service-health-alerts.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fraud-payment-service/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fraud-payment-service/app/events.py" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/app/events.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fraud-payment-service/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fraud-payment-service/app/metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/app/metrics.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fraud-payment-service/app/payment.py" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/app/payment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fraud-payment-service/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/fraud-payment-service/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory-service/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory-service/app/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/app/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/infra/kafka/topics.md" beforeDir="false" afterPath="$PROJECT_DIR$/prometheus/alerts/inventory-alerts.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inventory-service/app/events.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/app/events.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory-service/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory-service/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/app/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -14,6 +14,7 @@ from app.metrics import (
     fraud_check_duration_seconds,
     fraud_decisions,
     payment_failures,
+    payment_refunds_total
 )
 
 logger = get_logger()
@@ -171,6 +172,7 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
                     )
 
         elif event_type == "RefundRequested":
+            payment_refunds_total.inc()
             logger.info(
                 f"Processing RefundRequested: {order_id}",
                 extra={

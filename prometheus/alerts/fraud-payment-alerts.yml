@@ -1,0 +1,88 @@
+groups:
+- name: payment-and-fraud-alerts
+  rules:
+  - alert: PaymentSuccessRateLow
+    expr: |
+      (
+        rate(payment_attempts_total[5m])
+        -
+        sum(rate(payment_failures_total[5m]))
+      )
+      /
+      rate(payment_attempts_total[5m])
+      < 0.95
+    for: 5m
+    labels:
+      severity: critical
+      service: fraud-payment-service
+    annotations:
+      summary: "Payment success rate below 95%"
+      description: "Payment success rate has been under 95% for more than 5 minutes."
+
+  - alert: FraudBlockRateHigh
+    expr: |
+      (
+        sum(rate(fraud_decisions_total{decision="BLOCK"}[5m]))
+        /
+        sum(rate(fraud_decisions_total[5m]))
+      ) > 0.10
+      and
+      sum(rate(fraud_decisions_total[5m])) > 0
+    for: 5m
+    labels:
+      severity: warning
+      service: fraud-payment-service
+    annotations:
+      summary: "High fraud block rate"
+      description: "More than 10% of transactions are being blocked by fraud checks."
+
+  - alert: RefundRateHigh
+    expr: |
+      (
+        sum(rate(payment_refunds_total[5m]))
+        /
+        (
+          sum(rate(payment_attempts_total[5m]))
+          -
+          sum(rate(payment_failures_total[5m]))
+        )
+      ) > 0.02
+    for: 5m
+    labels:
+      severity: warning
+      service: fraud-payment-service
+    annotations:
+      summary: "Refund rate higher than 2%"
+      description: "More than 2% of successful payments are being refunded in the last 5 minutes."
+
+  - alert: PaymentProcessingLatencyP95High
+    expr: |
+      histogram_quantile(
+        0.95,
+        sum by (le) (
+          rate(payment_processing_duration_seconds_bucket[5m])
+        )
+      ) > 10
+    for: 5m
+    labels:
+      severity: warning
+      service: fraud-payment-service
+    annotations:
+      summary: "Payment processing latency P95 > 310"
+      description: "95th percentile of payment processing duration exceeded 10 seconds for more than 5 minutes."
+
+  - alert: PaymentProcessingLatencyP99High
+    expr: |
+      histogram_quantile(
+        0.99,
+        sum by (le) (
+          rate(payment_processing_duration_seconds_bucket[5m])
+        )
+      ) > 10
+    for: 5m
+    labels:
+      severity: critical
+      service: fraud-payment-service
+    annotations:
+      summary: "Payment processing latency P99 > 10s"
+      description: "99th percentile of payment processing duration exceeded 10 seconds for more than 5 minutes."

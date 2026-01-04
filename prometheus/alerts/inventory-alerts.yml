@@ -1,0 +1,51 @@
+groups:
+- name: inventory-alerts
+  rules:
+  - alert: InventoryReservationFailuresHigh
+    expr: |
+      (
+        sum(rate(inventory_reservation_failures[5m]))
+        /
+        sum(rate(inventory_reservation_duration_seconds_count[5m]))
+      ) > 0.05
+      and
+      sum(rate(inventory_reservation_duration_seconds_count[5m])) > 0
+    for: 5m
+    labels:
+      severity: warning
+      service: inventory-service
+    annotations:
+      summary: "Inventory reservation failure rate higher than 5%"
+      description: "More than 5% of inventory reservation attempts are failing in the last 5 minutes."
+
+  - alert: InventoryReservationLatencyP95High
+    expr: |
+      histogram_quantile(
+        0.95,
+        sum by (le) (
+          rate(inventory_reservation_duration_seconds_bucket[5m])
+        )
+      ) > 5
+    for: 5m
+    labels:
+      severity: warning
+      service: inventory-service
+    annotations:
+      summary: "Inventory reservation latency P95 > 5s"
+      description: "95th percentile of inventory reservation duration exceeded 5 seconds for more than 5 minutes."
+
+  - alert: InventoryReservationLatencyP99High
+    expr: |
+      histogram_quantile(
+        0.99,
+        sum by (le) (
+          rate(inventory_reservation_duration_seconds_bucket[5m])
+        )
+      ) > 5
+    for: 5m
+    labels:
+      severity: critical
+      service: inventory-service
+    annotations:
+      summary: "Inventory reservation latency P99 > 5s"
+      description: "99th percentile of inventory reservation duration exceeded 5 seconds for more than 5 minutes."

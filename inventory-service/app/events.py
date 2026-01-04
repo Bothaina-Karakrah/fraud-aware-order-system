@@ -112,7 +112,7 @@ async def handle_event(event: dict) -> None:
                     )
                 else:
                     # Increment failure counter with reason
-                    inventory_reservation_failures.labels(reason=message).inc()
+                    inventory_reservation_failures.labels(reason="StockReservationFailed").inc()
                     await publish_event(
                         topic="order-events",
                         event_type="StockReservationFailed",

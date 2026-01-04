@@ -1,0 +1,34 @@
+groups:
+- name: order-service-alerts
+  rules:
+  - alert: OrderProcessingLatencyP95High
+    expr: |
+      histogram_quantile(
+        0.95,
+        sum by (le) (
+          rate(order_processing_duration_seconds_bucket[5m])
+        )
+      ) > 10
+    for: 5m
+    labels:
+      severity: warning
+      service: order-service
+    annotations:
+      summary: "Order processing latency P95 > 10s"
+      description: "95th percentile of order processing latency has exceeded 10 seconds for more than 5 minutes."
+
+  - alert: OrderProcessingLatencyP99High
+    expr: |
+      histogram_quantile(
+        0.99,
+        sum by (le) (
+          rate(order_processing_duration_seconds_bucket[5m])
+        )
+      ) > 10
+    for: 5m
+    labels:
+      severity: critical
+      service: order-service
+    annotations:
+      summary: "Order processing latency P99 > 10s"
+      description: "99th percentile of order processing latency has exceeded 10 seconds for more than 5 minutes."

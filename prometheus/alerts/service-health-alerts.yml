@@ -1,0 +1,11 @@
+groups:
+- name: service-health
+  rules:
+  - alert: ServiceDown
+    expr: up == 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Service is down"
+      description: "Prometheus has not been able to scrape this service for more than 1 minute."
