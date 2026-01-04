@@ -1,6 +1,6 @@
 services:
   # -------------------------------
-  # Databases
+  # Databases with volumes
   # -------------------------------
   order-db:
     image: postgres:15
@@ -9,6 +9,8 @@ services:
       POSTGRES_DB: orders
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
+    volumes:
+      - order-db-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user -d orders"]
       interval: 5s
@@ -22,6 +24,8 @@ services:
       POSTGRES_DB: payments
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
+    volumes:
+      - payment-db-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user -d payments"]
       interval: 5s
@@ -35,6 +39,8 @@ services:
       POSTGRES_DB: inventory
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
+    volumes:
+      - inventory-db-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user -d inventory"]
       interval: 5s
@@ -79,6 +85,8 @@ services:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     ports:
       - "8000:8000"
+    volumes:
+      - ./logs/order-service:/app/logs
     depends_on:
       order-db:
         condition: service_healthy
@@ -93,6 +101,8 @@ services:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     ports:
       - "8002:8000"
+    volumes:
+      - ./logs/fraud-payment-service:/app/logs
     depends_on:
       payment-db:
         condition: service_healthy
@@ -107,8 +117,38 @@ services:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     ports:
       - "8001:8000"
+    volumes:
+      - ./logs/inventory-service:/app/logs
     depends_on:
       inventory-db:
         condition: service_healthy
       kafka:
         condition: service_healthy
+
+  # -------------------------------
+  # Prometheus
+  # -------------------------------
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+    depends_on:
+      - order-service
+      - fraud-payment-service
+      - inventory-service
+
+# -------------------------------
+# Named Volumes
+# -------------------------------
+volumes:
+  order-db-data:
+  payment-db-data:
+  inventory-db-data:
+  prometheus-data:
