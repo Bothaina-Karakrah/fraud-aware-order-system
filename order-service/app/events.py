@@ -160,8 +160,7 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
                 event_type="RefundRequested",
                 payload={
                     "order_id": str(order.order_id),
-                    "amount": float(order.amount),
-                    "reason": order.reason
+                    "amount": float(order.amount)
                 },
                 trace_id=trace_id
             )
@@ -191,9 +190,10 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
 # ======================
 
 async def start_consumer() -> None:
-    topics: List[str] = ["order-events", "payment-events", "inventory-events"]
     consumer = AIOKafkaConsumer(
-        topics,
+        "order-events",
+        "payment-events",  # Added to hear about payment/refund results
+        "inventory-events",  # Added to hear about stock results,
         bootstrap_servers=_KAFKA_SERVERS,
         group_id="order-service-group",
         value_deserializer=lambda m: json.loads(m.decode("utf-8")),

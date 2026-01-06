@@ -6,3 +6,21 @@
 {"asctime": "2026-01-06 09:19:57,418", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Kafka producer stopped"}
 {"asctime": "2026-01-06 09:20:02,491", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Starting Inventory Service..."}
 {"asctime": "2026-01-06 09:20:02,545", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Kafka consumer started"}
+{"asctime": "2026-01-06 09:33:29,036", "levelname": "INFO", "service": "inventory-service", "trace_id": null, "order_id": "3dec95f9-37c2-40cc-ba0b-75df75558c80", "event_type": "PaymentSucceeded", "message": "Stock reservation failed - order 3dec95f9-37c2-40cc-ba0b-75df75558c80"}
+{"asctime": "2026-01-06 09:33:29,039", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Order processing duration: 0.035881124989828095 seconds"}
+{"asctime": "2026-01-06 09:43:08,991", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Shutting down Inventory Service..."}
+{"asctime": "2026-01-06 09:43:09,161", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Kafka producer stopped"}
+{"asctime": "2026-01-06 09:43:13,816", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Starting Inventory Service..."}
+{"asctime": "2026-01-06 09:43:13,886", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Kafka consumer started"}
+{"asctime": "2026-01-06 09:44:03,902", "levelname": "INFO", "service": "inventory-service", "trace_id": null, "order_id": "6dab8071-5026-4b90-89fb-54fdd6c63ed2", "event_type": "PaymentSucceeded", "message": "Stock reservation failed - order 6dab8071-5026-4b90-89fb-54fdd6c63ed2"}
+{"asctime": "2026-01-06 09:44:03,904", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Order processing duration: 0.015750749997096136 seconds"}
+{"asctime": "2026-01-06 09:47:46,256", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Shutting down Inventory Service..."}
+{"asctime": "2026-01-06 09:47:46,452", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Kafka producer stopped"}
+{"asctime": "2026-01-06 09:47:53,798", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Starting Inventory Service..."}
+{"asctime": "2026-01-06 09:47:53,910", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Kafka consumer started"}
+{"asctime": "2026-01-06 09:51:52,925", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Shutting down Inventory Service..."}
+{"asctime": "2026-01-06 09:51:52,996", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Kafka producer stopped"}
+{"asctime": "2026-01-06 09:51:59,163", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Starting Inventory Service..."}
+{"asctime": "2026-01-06 09:51:59,242", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Kafka consumer started"}
+{"asctime": "2026-01-06 09:52:43,904", "levelname": "INFO", "service": "inventory-service", "trace_id": null, "order_id": "bde3b9eb-250a-4181-a087-c404429b5c80", "event_type": "PaymentSucceeded", "message": "Stock reservation failed - order bde3b9eb-250a-4181-a087-c404429b5c80"}
+{"asctime": "2026-01-06 09:52:43,905", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Order processing duration: 0.01515099999960512 seconds"}
