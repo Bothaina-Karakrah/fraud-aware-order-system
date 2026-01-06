@@ -1,0 +1,8 @@
+{"asctime": "2026-01-06 08:54:26,626", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Shutting down Inventory Service..."}
+{"asctime": "2026-01-06 08:54:26,858", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Kafka producer stopped"}
+{"asctime": "2026-01-06 08:54:33,955", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Starting Inventory Service..."}
+{"asctime": "2026-01-06 08:54:34,118", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Kafka consumer started"}
+{"asctime": "2026-01-06 09:19:57,292", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Shutting down Inventory Service..."}
+{"asctime": "2026-01-06 09:19:57,418", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Kafka producer stopped"}
+{"asctime": "2026-01-06 09:20:02,491", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Starting Inventory Service..."}
+{"asctime": "2026-01-06 09:20:02,545", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Kafka consumer started"}

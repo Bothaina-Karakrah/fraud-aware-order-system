@@ -1,0 +1,8 @@
+{"asctime": "2026-01-06 08:54:26,579", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Shutting down Fraud Payment Service..."}
+{"asctime": "2026-01-06 08:54:26,843", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Kafka producer stopped"}
+{"asctime": "2026-01-06 08:54:33,954", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Starting Fraud Payment Service..."}
+{"asctime": "2026-01-06 08:54:34,131", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Kafka consumer started"}
+{"asctime": "2026-01-06 09:19:57,341", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Shutting down Fraud Payment Service..."}
+{"asctime": "2026-01-06 09:19:57,441", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Kafka producer stopped"}
+{"asctime": "2026-01-06 09:20:02,495", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Starting Fraud Payment Service..."}
+{"asctime": "2026-01-06 09:20:02,551", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Kafka consumer started"}

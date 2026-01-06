@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "order-service"
+    static_configs:
+      - targets: ["order-service:8000"]
+
+  - job_name: "inventory-service"
+    static_configs:
+      - targets: ["inventory-service:8001"]
+
+  - job_name: "fraud-payment-service"
+    static_configs:
+      - targets: ["fraud-payment-service:8002"]
