@@ -1,8 +1,7 @@
 import logging
-import sys
 from pythonjsonlogger import json
 
-SERVICE_NAME = "inventory-service"
+SERVICE_NAME = "order_service"
 
 def get_logger():
     logger = logging.getLogger(SERVICE_NAME)
@@ -13,7 +12,7 @@ def get_logger():
 
     handlers = [
         logging.StreamHandler(),
-        logging.FileHandler("logs/inventory-service.log")
+        logging.FileHandler("logs/order_service.log")
     ]
 
     formatter = json.JsonFormatter(

@@ -17,7 +17,7 @@ groups:
     for: 5m
     labels:
       severity: critical
-      service: fraud-payment-service
+      service: fraud_payment_service
     annotations:
       summary: "Payment success rate below 95%"
       description: "Payment success rate has remained below 95% for more than 5 minutes."
@@ -34,7 +34,7 @@ groups:
     for: 5m
     labels:
       severity: warning
-      service: fraud-payment-service
+      service: fraud_payment_service
     annotations:
       summary: "High fraud block rate"
       description: "More than 10% of transactions are being blocked by fraud checks."
@@ -59,17 +59,17 @@ groups:
     for: 5m
     labels:
       severity: warning
-      service: fraud-payment-service
+      service: fraud_payment_service
     annotations:
       summary: "Refund rate higher than 2%"
       description: "More than 2% of successful payments are being refunded over the last 5 minutes."
 
   - alert: FraudPaymentServiceKafkaConsumerLagHigh
-    expr: kafka_consumer_lag{service="fraud-payment-service"} > 1000
+    expr: kafka_consumer_lag{service="fraud_payment_service"} > 1000
     for: 5m
     labels:
       severity: critical
-      service: fraud-payment-service
+      service: fraud_payment_service
     annotations:
-      summary: "Kafka consumer lag is high for fraud-payment-service"
+      summary: "Kafka consumer lag is high for fraud_payment_service"
       description: "Kafka consumer lag has exceeded 1000 messages for more than 5 minutes."

@@ -14,7 +14,7 @@ groups:
     for: 5m
     labels:
       severity: warning
-      service: inventory-service
+      service: inventory_service
     annotations:
       summary: "Inventory reservation failure rate above 5%"
       description: "More than 5% of inventory reservation attempts have failed over the last 5 minutes."
@@ -30,7 +30,7 @@ groups:
     for: 5m
     labels:
       severity: warning
-      service: inventory-service
+      service: inventory_service
     annotations:
       summary: "Inventory reservation latency P95 above 5s"
       description: "The 95th percentile of inventory reservation latency has been above 5 seconds for more than 5 minutes."
@@ -46,17 +46,17 @@ groups:
     for: 5m
     labels:
       severity: critical
-      service: inventory-service
+      service: inventory_service
     annotations:
       summary: "Inventory reservation latency P99 above 5s"
       description: "The 99th percentile of inventory reservation latency has been above 5 seconds for more than 5 minutes."
 
   - alert: InventoryServiceKafkaConsumerLagHigh
-    expr: kafka_consumer_lag{service="inventory-service"} > 1000
+    expr: kafka_consumer_lag{service="inventory_service"} > 1000
     for: 5m
     labels:
       severity: critical
-      service: inventory-service
+      service: inventory_service
     annotations:
-      summary: "Kafka consumer lag is high for inventory-service"
-      description: "Kafka consumer lag for inventory-service has exceeded 1000 messages for more than 5 minutes."
+      summary: "Kafka consumer lag is high for inventory_service"
+      description: "Kafka consumer lag for inventory_service has exceeded 1000 messages for more than 5 minutes."

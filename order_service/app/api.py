@@ -54,7 +54,7 @@ async def create_order(req: CreateOrderRequest, db: Session = Depends(get_db)):
         logger.info(
             "Start create_order request",
             extra={
-                "service": "order-service",
+                "service": "order_service",
                 "trace_id": trace_id,
                 "order_id": None,
                 "event_type": "OrderCreated"
@@ -98,7 +98,7 @@ async def create_order(req: CreateOrderRequest, db: Session = Depends(get_db)):
             logger.error(
                 f"Failed to publish event: {e}",
                 extra={
-                    "service": "order-service",
+                    "service": "order_service",
                     "trace_id": trace_id,
                     "order_id": str(order.order_id),
                     "event_type": "OrderCreated"
@@ -116,7 +116,7 @@ async def create_order(req: CreateOrderRequest, db: Session = Depends(get_db)):
         logger.error(
             f"Error creating order: {e}",
             extra={
-                "service": "order-service",
+                "service": "order_service",
                 "trace_id": trace_id,
                 "order_id": None,
                 "event_type": "OrderCreated"

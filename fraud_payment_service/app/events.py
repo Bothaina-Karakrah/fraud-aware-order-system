@@ -56,7 +56,7 @@ async def publish_event(*, topic: str, event_type: str, payload: dict, trace_id:
     logger.info(
         "Event published",
         extra={
-            "service": "fraud-payment-service",
+            "service": "fraud_payment_service",
             "trace_id": trace_id,
             "order_id": payload.get("order_id"),
             "event_type": event_type,
@@ -91,9 +91,9 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
     if not event_id_str or not order_id:
         logger.warning(
             "Invalid Inputs",
-            extra={"service": "fraud-payment-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
+            extra={"service": "fraud_payment_service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
         )
-        kafka_processing_errors.labels(service="fraud-payment-service").inc()
+        kafka_processing_errors.labels(service="fraud_payment_service").inc()
         return
 
     # Convert event_id string to UUID for idempotency
@@ -102,9 +102,9 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
     except (ValueError, TypeError):
         logger.warning(
             f"Invalid event_id format: {event_id_str}",
-            extra={"service": "fraud-payment-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
+            extra={"service": "fraud_payment_service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
         )
-        kafka_processing_errors.labels(service="fraud-payment-service").inc()
+        kafka_processing_errors.labels(service="fraud_payment_service").inc()
         return
 
     close_db = False
@@ -117,14 +117,14 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
         if db.query(ProcessedEvent).filter_by(event_id=event_id).first():
             logger.info(
                 "Event already processed",
-                extra={"service": "fraud-payment-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
+                extra={"service": "fraud_payment_service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
             )
             return
 
         if event_type == "OrderCreated":
             logger.info(
                 f"Processing OrderCreated: {order_id}",
-                extra={"service": "fraud-payment-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
+                extra={"service": "fraud_payment_service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
             )
 
             # Fraud check
@@ -159,7 +159,7 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
                 )
                 logger.info(
                     f"Order blocked: {order_id}",
-                    extra={"service": "fraud-payment-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type},
+                    extra={"service": "fraud_payment_service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type},
                 )
             else:
                 await publish_event(
@@ -176,27 +176,27 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
                     db.rollback()
                     payment_failures.labels(reason="PROCESSING_ERROR").inc()
                     logger.error(f"Payment processing failed for order {order_id}",
-                                 extra={"service": "fraud-payment-service", "trace_id": trace_id, "order_id": order_id})
+                                 extra={"service": "fraud_payment_service", "trace_id": trace_id, "order_id": order_id})
 
         elif event_type == "RefundRequested":
             payment_refunds_total.inc()
-            logger.info(f"Processing RefundRequested: {order_id}", extra={"service": "fraud-payment-service", "trace_id": trace_id, "order_id": order_id})
+            logger.info(f"Processing RefundRequested: {order_id}", extra={"service": "fraud_payment_service", "trace_id": trace_id, "order_id": order_id})
             try:
                 await process_refund(db, order_id, trace_id)
                 db.commit()
             except Exception:
                 db.rollback()
-                kafka_processing_errors.labels(service="fraud-payment-service").inc()
-                logger.error(f"Refund processing failed for order {order_id}", extra={"service": "fraud-payment-service", "trace_id": trace_id, "order_id": order_id})
+                kafka_processing_errors.labels(service="fraud_payment_service").inc()
+                logger.error(f"Refund processing failed for order {order_id}", extra={"service": "fraud_payment_service", "trace_id": trace_id, "order_id": order_id})
 
         # Mark event as processed
         db.add(ProcessedEvent(event_id=event_id, event_type=event_type))
         db.commit()
-        kafka_messages_processed.labels(service="fraud-payment-service").inc()
+        kafka_messages_processed.labels(service="fraud_payment_service").inc()
 
     except Exception:
         db.rollback()
-        logger.error(f"Error handling event {event_id}", extra={"service": "fraud-payment-service", "trace_id": trace_id, "order_id": order_id})
+        logger.error(f"Error handling event {event_id}", extra={"service": "fraud_payment_service", "trace_id": trace_id, "order_id": order_id})
     finally:
         if close_db:
             db.close()
@@ -207,7 +207,7 @@ async def start_consumer() -> None:
         "order-events",
         "payment-events",
         bootstrap_servers=_KAFKA_SERVERS,
-        group_id="fraud-payment-service-group",
+        group_id="fraud_payment_service-group",
         value_deserializer=lambda m: json.loads(m.decode("utf-8")),
     )
     await consumer.start()
@@ -216,7 +216,7 @@ async def start_consumer() -> None:
             tp = TopicPartition(msg.topic, msg.partition)
             committed = await consumer.committed(tp)
             lag = msg.offset - committed if committed is not None else 0
-            kafka_consumer_lag.labels(service="fraud-payment-service").set(lag)
+            kafka_consumer_lag.labels(service="fraud_payment_service").set(lag)
             await handle_event(msg.value)
     finally:
         await consumer.stop()

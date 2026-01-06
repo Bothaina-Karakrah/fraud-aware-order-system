@@ -1,0 +1,4 @@
+{"asctime": "2026-01-06 10:26:13,686", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Starting Inventory Service..."}
+{"asctime": "2026-01-06 10:26:13,769", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Kafka consumer started"}
+{"asctime": "2026-01-06 10:33:21,711", "levelname": "INFO", "service": "inventory_service", "trace_id": null, "order_id": "336520b7-4afb-4f31-bed1-707c2592ea2f", "event_type": "PaymentSucceeded", "message": "Stock reserved - order 336520b7-4afb-4f31-bed1-707c2592ea2f"}
+{"asctime": "2026-01-06 10:33:21,713", "levelname": "INFO", "service": null, "trace_id": null, "order_id": null, "event_type": null, "message": "Order processing duration: 0.038882458000443876 seconds"}

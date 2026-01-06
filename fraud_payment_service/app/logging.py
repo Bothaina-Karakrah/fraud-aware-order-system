@@ -2,7 +2,7 @@ import sys
 import logging
 from pythonjsonlogger import json
 
-SERVICE_NAME = "fraud-payment-service"
+SERVICE_NAME = "fraud_payment_service"
 
 def get_logger():
     logger = logging.getLogger(SERVICE_NAME)
@@ -13,7 +13,7 @@ def get_logger():
 
     handlers = [
         logging.StreamHandler(),
-        logging.FileHandler("logs/fraud-payment-service.log")
+        logging.FileHandler("logs/fraud_payment_service.log")
     ]
 
     formatter = json.JsonFormatter(

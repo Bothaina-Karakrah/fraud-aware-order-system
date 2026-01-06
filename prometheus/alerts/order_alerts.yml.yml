@@ -1,5 +1,5 @@
 groups:
-- name: order-service-alerts
+- name: order_service_alerts
   rules:
 
   - alert: OrderProcessingLatencyP95High
@@ -13,7 +13,7 @@ groups:
     for: 5m
     labels:
       severity: warning
-      service: order-service
+      service: order_service
     annotations:
       summary: "Order processing latency P95 above 10s"
       description: "The 95th percentile of order processing latency has been above 10 seconds for more than 5 minutes."
@@ -29,17 +29,17 @@ groups:
     for: 5m
     labels:
       severity: critical
-      service: order-service
+      service: order_service
     annotations:
       summary: "Order processing latency P99 above 10s"
       description: "The 99th percentile of order processing latency has been above 10 seconds for more than 5 minutes."
 
   - alert: OrderServiceKafkaConsumerLagHigh
-    expr: kafka_consumer_lag{service="order-service"} > 1000
+    expr: kafka_consumer_lag{service="order_service"} > 1000
     for: 5m
     labels:
       severity: critical
-      service: order-service
+      service: order_service
     annotations:
-      summary: "Kafka consumer lag is high for order-service"
-      description: "Kafka consumer lag for order-service has exceeded 1000 messages for more than 5 minutes."
+      summary: "Kafka consumer lag is high for order_service"
+      description: "Kafka consumer lag for order_service has exceeded 1000 messages for more than 5 minutes."

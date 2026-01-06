@@ -52,7 +52,7 @@ async def publish_event(*, topic: str, event_type: str, payload: dict, trace_id:
     logger.info(
         "Event published",
         extra={
-            "service": "order-service",
+            "service": "order_service",
             "trace_id": trace_id,
             "order_id": payload.get("order_id"),
             "event_type": event_type,
@@ -91,9 +91,9 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
     if not event_id or not order_id:
         logger.warning(
             "Invalid Inputs",
-            extra={"service": "order-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
+            extra={"service": "order_service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
         )
-        kafka_processing_errors.labels(service="order-service").inc()
+        kafka_processing_errors.labels(service="order_service").inc()
         return
 
     close_db = False
@@ -108,18 +108,18 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
         except (ValueError, TypeError, AttributeError):
             logger.warning(
                 f"Invalid event_id format: {event_id}",
-                extra={"service": "order-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
+                extra={"service": "order_service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
             )
-            kafka_processing_errors.labels(service="order-service").inc()
+            kafka_processing_errors.labels(service="order_service").inc()
             return
 
         # Idempotency Check
         if db.query(ProcessedEvent).filter_by(event_id=event_uuid).first():
             logger.info(
                 "Event already processed",
-                extra={"service": "order-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
+                extra={"service": "order_service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
             )
-            kafka_messages_processed.labels(service="order-service").inc()
+            kafka_messages_processed.labels(service="order_service").inc()
             return
 
         # Check if order exists
@@ -127,9 +127,9 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
         if not order:
             logger.warning(
                 "Order not found",
-                extra={"service": "order-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
+                extra={"service": "order_service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
             )
-            kafka_processing_errors.labels(service="order-service").inc()
+            kafka_processing_errors.labels(service="order_service").inc()
             return
 
         # Update Status
@@ -139,7 +139,7 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
             order.status = new_status
             logger.info(
                 f"Order {order_id} status changed from {prev_status} to {new_status}",
-                extra={"service": "order-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
+                extra={"service": "order_service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
             )
             # Metrics
             order_status_transitions_total.labels(status=str(new_status.value)).inc()
@@ -166,21 +166,21 @@ async def handle_event(event: dict, db: Optional[Session] = None) -> None:
             )
             logger.info(
                 f"RefundRequested for order {order_id}",
-                extra={"service": "order-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
+                extra={"service": "order_service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
             )
 
         # Mark as processed
         db.add(ProcessedEvent(event_id=event_uuid, event_type=event_type))
         db.commit()
-        kafka_messages_processed.labels(service="order-service").inc()
+        kafka_messages_processed.labels(service="order_service").inc()
 
     except Exception as e:
         db.rollback()
         logger.error(
             f"Error handling event: {e}",
-            extra={"service": "order-service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
+            extra={"service": "order_service", "trace_id": trace_id, "order_id": order_id, "event_type": event_type}
         )
-        kafka_processing_errors.labels(service="order-service").inc()
+        kafka_processing_errors.labels(service="order_service").inc()
     finally:
         if close_db:
             db.close()
@@ -195,7 +195,7 @@ async def start_consumer() -> None:
         "payment-events",  # Added to hear about payment/refund results
         "inventory-events",  # Added to hear about stock results,
         bootstrap_servers=_KAFKA_SERVERS,
-        group_id="order-service-group",
+        group_id="order_service_group",
         value_deserializer=lambda m: json.loads(m.decode("utf-8")),
         enable_auto_commit=True
     )
@@ -207,7 +207,7 @@ async def start_consumer() -> None:
             tp = TopicPartition(msg.topic, msg.partition)
             committed = await consumer.committed(tp)
             lag = msg.offset - committed if committed is not None else 0
-            kafka_consumer_lag.labels(service="order-service").set(lag)
+            kafka_consumer_lag.labels(service="order_service").set(lag)
 
             await handle_event(msg.value)
     finally:
