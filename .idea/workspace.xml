@@ -9,7 +9,6 @@
       <change beforePath="$PROJECT_DIR$/logs/fraud-payment-service/fraud-payment-service.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/fraud-payment-service/fraud-payment-service.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/inventory-service/inventory-service.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/inventory-service/inventory-service.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/order-service/order-service.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/order-service/order-service.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/app/events.py" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/app/events.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
