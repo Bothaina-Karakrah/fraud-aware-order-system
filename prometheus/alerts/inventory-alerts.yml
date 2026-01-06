@@ -1,22 +1,23 @@
 groups:
 - name: inventory-alerts
   rules:
-  - alert: InventoryReservationFailuresHigh
+
+  - alert: InventoryReservationFailureRateHigh
     expr: |
       (
         sum(rate(inventory_reservation_failures[5m]))
         /
-        sum(rate(inventory_reservation_duration_seconds_count[5m]))
+        sum(rate(inventory_reservations_total[5m]))
       ) > 0.05
       and
-      sum(rate(inventory_reservation_duration_seconds_count[5m])) > 0
+      sum(rate(inventory_reservations_total[5m])) > 0
     for: 5m
     labels:
       severity: warning
       service: inventory-service
     annotations:
-      summary: "Inventory reservation failure rate higher than 5%"
-      description: "More than 5% of inventory reservation attempts are failing in the last 5 minutes."
+      summary: "Inventory reservation failure rate above 5%"
+      description: "More than 5% of inventory reservation attempts have failed over the last 5 minutes."
 
   - alert: InventoryReservationLatencyP95High
     expr: |
@@ -31,8 +32,8 @@ groups:
       severity: warning
       service: inventory-service
     annotations:
-      summary: "Inventory reservation latency P95 > 5s"
-      description: "95th percentile of inventory reservation duration exceeded 5 seconds for more than 5 minutes."
+      summary: "Inventory reservation latency P95 above 5s"
+      description: "The 95th percentile of inventory reservation latency has been above 5 seconds for more than 5 minutes."
 
   - alert: InventoryReservationLatencyP99High
     expr: |
@@ -47,5 +48,15 @@ groups:
       severity: critical
       service: inventory-service
     annotations:
-      summary: "Inventory reservation latency P99 > 5s"
-      description: "99th percentile of inventory reservation duration exceeded 5 seconds for more than 5 minutes."
+      summary: "Inventory reservation latency P99 above 5s"
+      description: "The 99th percentile of inventory reservation latency has been above 5 seconds for more than 5 minutes."
+
+  - alert: InventoryServiceKafkaConsumerLagHigh
+    expr: kafka_consumer_lag{service="inventory-service"} > 1000
+    for: 5m
+    labels:
+      severity: critical
+      service: inventory-service
+    annotations:
+      summary: "Kafka consumer lag is high for inventory-service"
+      description: "Kafka consumer lag for inventory-service has exceeded 1000 messages for more than 5 minutes."

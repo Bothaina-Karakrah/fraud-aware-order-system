@@ -1,4 +1,4 @@
-from prometheus_client import Counter, Histogram
+from prometheus_client import Counter, Histogram, Gauge
 
 # -----------------------
 # Fraud metrics
@@ -33,4 +33,28 @@ payment_failures = Counter(
 payment_refunds_total = Counter(
     "payment_refunds_total",
     "Total number of refunded payments",
+)
+
+# -----------------------
+# Kafka metrics
+# -----------------------
+# Consumer Lag (for the alert)
+kafka_consumer_lag = Gauge(
+    'kafka_consumer_lag',
+    'Consumer lag in messages',
+    ['service']
+)
+
+# Processing Errors (for debugging failures)
+kafka_processing_errors = Counter(
+    'kafka_processing_errors_total',
+    'Failed message processing',
+    ['service']
+)
+
+# Messages Processed (verify that system is working)
+kafka_messages_processed = Counter(
+    'kafka_messages_processed_total',
+    'Messages successfully processed',
+    ['service']
 )
