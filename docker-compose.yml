@@ -1,47 +1,3 @@
-"""
-DOCKER COMPOSE INFRASTRUCTURE
-=============================
-Complete microservices stack for Fraud-Aware Order System
-
-ARCHITECTURE:
-┌─────────────────┐        ┌──────────────────┐        ┌─────────────────┐
-│ Order Service   │───┐    │ Fraud & Payment  │    ┌───│ Inventory       │
-│ (Port 8000)     │   │    │ Service          │    │   │ Service         │
-└─────────────────┘   │    │ (Port 8002)      │    │   │ (Port 8001)     │
-       │              │    └──────────────────┘    │   └─────────────────┘
-       │              └────────┬─────────────────┬─┘
-       │                       │                 │
-       └───────────────────────┼─────────────────┘
-                      (Kafka Message Bus)
-                               │
-           ┌───────────────────┴───────────────────┐
-           │                                       │
-      ┌────▼──────┐    ┌─────────────┐    ┌──────▼────┐
-      │ Zookeeper │───▶│   Kafka     │    │ Prometheus│
-      │           │    │   (9092)    │    │ (9090)    │
-      └───────────┘    └─────────────┘    └───────────┘
-           │
-     ┌─────┴─────┬─────────────┬──────────────┐
-     │           │             │              │
-┌────▼──┐  ┌────▼──┐  ┌──────▼───┐  ┌──────▼───┐
-│Order  │  │Payment│  │Inventory │  │Prometheus│
-│ DB    │  │ DB    │  │   DB     │  │   Data   │
-└───────┘  └───────┘  └──────────┘  └──────────┘
-
-SERVICES:
-• 3x PostgreSQL databases (isolated per service)
-• Kafka + Zookeeper (event-driven communication)
-• 3x FastAPI microservices
-• Prometheus (metrics & monitoring)
-
-TO RUN:
-  docker-compose up --build          # Start all services
-  docker-compose logs -f             # View all logs
-  docker-compose down -v             # Stop and remove volumes
-"""
-
-version: '3.8'
-
 services:
   # ===============================
   # MICROSERVICES DATABASES
@@ -206,11 +162,11 @@ volumes:
   inventory-db-data:   # Inventory Service database storage
   prometheus-data:     # Prometheus time-series data storage
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    ports:
+      ports:
       - "8002:8000"
-    volumes:
+      volumes:
       - ./logs/fraud_payment_service:/app/logs
-    depends_on:
+      depends_on:
       payment-db:
         condition: service_healthy
       kafka:
@@ -254,8 +210,8 @@ volumes:
 # -------------------------------
 # Named Volumes
 # -------------------------------
-volumes:
-  order-db-data:
-  payment-db-data:
-  inventory-db-data:
-  prometheus-data:
+  volumes:
+    order-db-data:
+    payment-db-data:
+    inventory-db-data:
+    prometheus-data:
